@@ -16,7 +16,7 @@
             --border-color: #334155;
             --text-primary: #f1f5f9;
             --text-secondary: #9ca3af;
-            --font-main: 'Tajawal', sans-serif; 
+            --font-main: 'Tajawal', sans-serif;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; scroll-behavior: smooth; }
@@ -42,8 +42,8 @@
         }
         
         .main-header.scrolled {
-             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-             border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .navbar { display: flex; justify-content: space-between; align-items: center; }
@@ -139,6 +139,95 @@
             font-weight: 700;
         }
 
+        /* --- التحقق من الشهادة --- */
+        .verification-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: var(--surface-bg);
+            padding: 40px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .verification-form label {
+            display: block;
+            font-size: 20px;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .verification-form input[type="text"] {
+            width: calc(100% - 24px); /* Full width minus padding */
+            padding: 12px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            font-size: 18px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .verification-form input[type="text"]:focus {
+            border-color: var(--primary-color);
+        }
+
+        .verification-form button {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 14px 40px;
+            border: none;
+            border-radius: 8px;
+            font-family: var(--font-main);
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .verification-form button:hover {
+            background-color: #0c8cce; /* Slightly darker primary color */
+            transform: translateY(-2px);
+        }
+
+        .verification-results {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: right; /* RTL */
+            font-size: 18px;
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .verification-results.success {
+            background-color: rgba(37, 211, 102, 0.15); /* Light green tint */
+            color: var(--whatsapp-color); /* Green text */
+            border: 1px solid var(--whatsapp-color);
+        }
+
+        .verification-results.error {
+            background-color: rgba(220, 53, 69, 0.15); /* Light red tint */
+            color: #dc3545; /* Red text */
+            border: 1px solid #dc3545;
+        }
+
+        .verification-results p {
+            margin-bottom: 10px;
+        }
+
+        .verification-results p strong {
+            color: var(--text-primary);
+            margin-left: 5px; /* RTL spacing */
+        }
+        /* --- نهاية التحقق من الشهادة --- */
+
         .contact-section { text-align: center; }
         .contact-section p { font-size: 20px; max-width: 600px; margin: 0 auto 40px auto; }
         .btn-whatsapp { border-color: var(--whatsapp-color); color: var(--whatsapp-color); font-size: 20px; padding: 15px 40px; }
@@ -149,10 +238,12 @@
         
         @media (max-width: 768px) {
             .navbar { flex-direction: column; gap: 20px; }
-            .nav-links { display: none; } 
+            .nav-links { /*display: none;*/ /* Keep nav links for smaller screens */ }
+            .nav-links a { margin-right: 15px; } /* Adjust spacing */
             .hero h1 { font-size: 42px; }
             .hero .subtitle { font-size: 22px; }
             .about-content { flex-direction: column; text-align: center;}
+            .verification-form { padding: 30px 20px; } /* Adjust padding for smaller screens */
         }
     </style>
 </head>
@@ -164,7 +255,7 @@
             <div class="nav-links">
                 <a href="#about">من أنا</a>
                 <a href="#courses">الدورات</a>
-                <a href="#contact">تواصل</a>
+                <a href="#verification">التحقق من الشهادة</a> <a href="#contact">تواصل</a>
             </div>
             <a href="https://wa.me/213777193012" target="_blank" class="btn">تواصل واتساب</a>
         </nav>
@@ -278,12 +369,24 @@
             </div>
         </section>
 
+        <section id="verification" class="section reveal">
+            <div class="container">
+                <h2 class="section-title">التحقق من صحة الشهادة</h2>
+                <div class="verification-form">
+                    <label for="certificateId">أدخل رقم الشهادة:</label>
+                    <input type="text" id="certificateId" placeholder="على سبيل المثال: HD2025-001">
+                    <button id="verifyButton">تحقق الآن</button>
+                    <div id="verificationResults" class="verification-results">
+                        </div>
+                </div>
+            </div>
+        </section>
         <section id="contact" class="section reveal">
             <div class="container contact-section">
                 <h2 class="section-title">هل أنت جاهز للخطوة التالية؟</h2>
                 <p>تواصل معي مباشرة عبر واتساب لمناقشة مشروعك، طلب خدمة، أو الاستفسار عن الدورات. أنا هنا للاستماع إليك ومساعدتك.</p>
                 <a href="https://wa.me/213777193012?text=مرحباً%20هيثم،%20لقد%20رأيت%20موقعك%20وأود%20الاستفسار%20عن%20الدورات." target="_blank" class="btn btn-whatsapp" style="font-size: 20px; padding: 15px 40px;">
-                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.8 0-67.3-8.8-98.1-25.4l-7-4.2-72.5 19 19.3-70.6-4.6-7.3c-18.1-28.9-28.2-61.6-28.2-95.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5c-.1 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.8 0-67.3-8.8-98.1-25.4l-7-4.2-72.5 19 19.3-70.6-4.6-7.3c-18.1-28.9-28.2-61.6-28.2-95.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5c-.1 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
                     <span>تواصل معي عبر واتساب</span>
                 </a>
             </div>
@@ -357,6 +460,63 @@
                 target.classList.add('active');
             });
         });
+
+        // --- JavaScript الخاص بخدمة التحقق من الشهادة ---
+        const certificateIdInput = document.getElementById('certificateId');
+        const verifyButton = document.getElementById('verifyButton');
+        const verificationResults = document.getElementById('verificationResults');
+
+        // **هام: استبدل هذا الرابط برابط Google Apps Script المنشور الخاص بك**
+        const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE'; // <--- استبدل هذا
+
+        verifyButton.addEventListener('click', function() {
+            const certificateId = certificateIdInput.value.trim();
+            verificationResults.style.display = 'none'; // إخفاء النتائج السابقة
+            verificationResults.classList.remove('success', 'error');
+            verificationResults.innerHTML = ''; // مسح المحتوى السابق
+
+            if (!certificateId) {
+                verificationResults.classList.add('error');
+                verificationResults.innerHTML = '<p>الرجاء إدخال رقم الشهادة للتحقق.</p>';
+                verificationResults.style.display = 'block';
+                return;
+            }
+
+            // عرض رسالة تحميل
+            verificationResults.classList.add('info'); // يمكنك إضافة ستايل خاص للتحميل
+            verificationResults.innerHTML = '<p>جاري التحقق من الشهادة، الرجاء الانتظار...</p>';
+            verificationResults.style.display = 'block';
+
+            fetch(SCRIPT_URL + '?certificateId=' + encodeURIComponent(certificateId))
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    verificationResults.style.display = 'block'; // التأكد من إظهار النتائج
+                    if (data.status === 'success') {
+                        verificationResults.classList.add('success');
+                        verificationResults.innerHTML = `
+                            <p><strong>تم العثور على الشهادة بنجاح!</strong></p>
+                            <p><strong>اسم المتدرب:</strong> ${data.name}</p>
+                            <p><strong>الدورة:</strong> ${data.course}</p>
+                            <p><strong>تاريخ الإصدار:</strong> ${data.issueDate}</p>
+                        `;
+                    } else {
+                        verificationResults.classList.add('error');
+                        verificationResults.innerHTML = `<p>${data.message}</p>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching verification data:', error);
+                    verificationResults.style.display = 'block'; // التأكد من إظهار النتائج
+                    verificationResults.classList.add('error');
+                    verificationResults.innerHTML = '<p>حدث خطأ أثناء الاتصال بالخادم. الرجاء المحاولة مرة أخرى لاحقاً.</p>';
+                });
+        });
+        // --- نهاية JavaScript الخاص بخدمة التحقق ---
     });
     //]]>
     </script>
