@@ -48,7 +48,11 @@
 
         .navbar { display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 28px; color: var(--text-primary); text-decoration: none; font-weight: 800; }
-        .nav-links a { color: var(--text-secondary); text-decoration: none; margin-right: 30px; font-weight: 700; transition: color 0.3s ease; }
+        .nav-links {
+            display: flex; /* Adjust for responsiveness if needed */
+            gap: 30px; /* Spacing between links */
+        }
+        .nav-links a { color: var(--text-secondary); text-decoration: none; font-weight: 700; transition: color 0.3s ease; }
         .nav-links a:hover { color: var(--primary-color); }
         .btn { display: inline-block; padding: 12px 30px; border: 2px solid var(--primary-color); color: var(--primary-color); border-radius: 8px; text-decoration: none; font-weight: 700; transition: all 0.3s ease; }
         .btn:hover { background-color: var(--primary-color); color: #fff; font-weight: 800;}
@@ -217,6 +221,13 @@
             color: #dc3545; /* Red text */
             border: 1px solid #dc3545;
         }
+        
+        .verification-results.info { /* For loading message */
+            background-color: rgba(255, 193, 7, 0.15); /* Light yellow tint */
+            color: #ffc107; /* Yellow text */
+            border: 1px solid #ffc107;
+        }
+
 
         .verification-results p {
             margin-bottom: 10px;
@@ -238,12 +249,19 @@
         
         @media (max-width: 768px) {
             .navbar { flex-direction: column; gap: 20px; }
-            .nav-links { /*display: none;*/ /* Keep nav links for smaller screens */ }
-            .nav-links a { margin-right: 15px; } /* Adjust spacing */
+            .nav-links { 
+                /* display: none;  If you want to hide on mobile, uncomment this. 
+                                For now, I'm keeping them visible or wrapping. */
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px; /* Adjust spacing for mobile */
+            }
+            .nav-links a { margin-right: 0; } /* Remove extra margin on mobile */
             .hero h1 { font-size: 42px; }
             .hero .subtitle { font-size: 22px; }
             .about-content { flex-direction: column; text-align: center;}
             .verification-form { padding: 30px 20px; } /* Adjust padding for smaller screens */
+            .section-title { font-size: 32px; } /* Smaller titles for mobile */
         }
     </style>
 </head>
@@ -255,7 +273,8 @@
             <div class="nav-links">
                 <a href="#about">من أنا</a>
                 <a href="#courses">الدورات</a>
-                <a href="#verification">التحقق من الشهادة</a> <a href="#contact">تواصل</a>
+                <a href="#verification">التحقق من الشهادة</a>
+                <a href="#contact">تواصل</a>
             </div>
             <a href="https://wa.me/213777193012" target="_blank" class="btn">تواصل واتساب</a>
         </nav>
@@ -400,7 +419,6 @@
     </footer>
 
     <script>
-    //<![CDATA[
     document.addEventListener('DOMContentLoaded', function () {
         new Typed('#typed-subtitle', {
             strings: ['مستشار في الأمن السيبراني.', 'مطور ويب محترف.', 'مدرب ومُرشد تقني.'],
@@ -466,14 +484,17 @@
         const verifyButton = document.getElementById('verifyButton');
         const verificationResults = document.getElementById('verificationResults');
 
-        // **هام: استبدل هذا الرابط برابط Google Apps Script المنشور الخاص بك**
-        const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE'; // <--- استبدل هذا
+        // *************** هام جداً ***************
+        // استبدل هذا الرابط برابط Google Apps Script المنشور الخاص بك!
+        // يجب أن يكون هذا هو "Web app URL" الذي تحصل عليه بعد نشر السكريبت كـ "تطبيق ويب"
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbytFXGJXv-KOVFJtSCjWaTNlAxVEBs_xZmO6hD9ImzyCBuVnqXl7thuT5-V5yLQZFN0AA/exec'; 
+        // *****************************************
 
-        verifyButton.addEventListener('click', function() {
+        verifyButton.addEventListener('click', async function() { // Added async keyword
             const certificateId = certificateIdInput.value.trim();
-            verificationResults.style.display = 'none'; // إخفاء النتائج السابقة
-            verificationResults.classList.remove('success', 'error');
-            verificationResults.innerHTML = ''; // مسح المحتوى السابق
+            verificationResults.style.display = 'none'; 
+            verificationResults.classList.remove('success', 'error', 'info'); // Clear all previous states
+            verificationResults.innerHTML = ''; 
 
             if (!certificateId) {
                 verificationResults.classList.add('error');
@@ -482,43 +503,47 @@
                 return;
             }
 
-            // عرض رسالة تحميل
-            verificationResults.classList.add('info'); // يمكنك إضافة ستايل خاص للتحميل
+            // Show loading message
+            verificationResults.classList.add('info'); 
             verificationResults.innerHTML = '<p>جاري التحقق من الشهادة، الرجاء الانتظار...</p>';
             verificationResults.style.display = 'block';
+            verifyButton.disabled = true; // Disable button during fetch
+            certificateIdInput.disabled = true; // Disable input during fetch
 
-            fetch(SCRIPT_URL + '?certificateId=' + encodeURIComponent(certificateId))
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    verificationResults.style.display = 'block'; // التأكد من إظهار النتائج
-                    if (data.status === 'success') {
-                        verificationResults.classList.add('success');
-                        verificationResults.innerHTML = `
-                            <p><strong>تم العثور على الشهادة بنجاح!</strong></p>
-                            <p><strong>اسم المتدرب:</strong> ${data.name}</p>
-                            <p><strong>الدورة:</strong> ${data.course}</p>
-                            <p><strong>تاريخ الإصدار:</strong> ${data.issueDate}</p>
-                        `;
-                    } else {
-                        verificationResults.classList.add('error');
-                        verificationResults.innerHTML = `<p>${data.message}</p>`;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching verification data:', error);
-                    verificationResults.style.display = 'block'; // التأكد من إظهار النتائج
+            try {
+                const response = await fetch(SCRIPT_URL + '?certificateId=' + encodeURIComponent(certificateId));
+                
+                if (!response.ok) {
+                    throw new Error(`خطأ في الشبكة: ${response.status}`);
+                }
+                
+                const data = await response.json();
+
+                verificationResults.style.display = 'block'; 
+                if (data.status === 'success') {
+                    verificationResults.classList.add('success');
+                    verificationResults.innerHTML = `
+                        <p><strong>تم العثور على الشهادة بنجاح!</strong></p>
+                        <p><strong>اسم المتدرب:</strong> ${data.student_name}</p>
+                        <p><strong>الدورة:</strong> ${data.course_name}</p>
+                        <p><strong>تاريخ الإصدار:</strong> ${data.issue_date}</p>
+                    `;
+                } else {
                     verificationResults.classList.add('error');
-                    verificationResults.innerHTML = '<p>حدث خطأ أثناء الاتصال بالخادم. الرجاء المحاولة مرة أخرى لاحقاً.</p>';
-                });
+                    verificationResults.innerHTML = `<p>${data.message}</p>`;
+                }
+            } catch (error) {
+                console.error('Error fetching verification data:', error);
+                verificationResults.style.display = 'block'; 
+                verificationResults.classList.add('error');
+                verificationResults.innerHTML = '<p>حدث خطأ أثناء الاتصال بالخادم. الرجاء المحاولة مرة أخرى لاحقاً أو التأكد من صحة رقم الشهادة.</p>';
+            } finally {
+                verifyButton.disabled = false; // Re-enable button
+                certificateIdInput.disabled = false; // Re-enable input
+            }
         });
         // --- نهاية JavaScript الخاص بخدمة التحقق ---
     });
-    //]]>
     </script>
 
 </body>
